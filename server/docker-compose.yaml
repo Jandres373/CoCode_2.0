@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Servicio de base de datos (Ejemplo: PostgreSQL)
+  # Servicio de base de datos 
   dev-db:
     image: postgres:latest
     environment:

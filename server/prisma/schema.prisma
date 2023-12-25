@@ -1,0 +1,267 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Definición del generador para el cliente Prisma
+// Generador de cliente
+// Generador de cliente
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Configuración de la base de datos PostgreSQL
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Model
+// The user is the basic and central entity in the app. A user can perform the following actions in the app: view projects, create projects, collaborate on projects, have a different role in each collaboration, be assigned different technologies, generate reports, create and receive queries, be associated with a team, disassociate from a team, leave a comment, view comments.
+model User {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  email          String    @unique
+  hashedPassword String
+  firstName      String
+  lastName       String
+  avatar         String?
+  country        String?
+  githubUser     String?
+  ranking        Int?
+  points         Int       @default(0)
+  tag            UserTags  @default(newbie)
+  openToWork     Boolean   @default(true)
+  rol            UserRoles @default(user)
+
+  // Relations
+  projectsCreated      Project[]
+  projectsCollaborated Project[] @relation(name: "colaborations")
+  leadingTeams         Team[]    @relation(name: "leader")
+  memberOfTeams        Team[]    @relation(name: "members")
+  asignedToTasks       Task[]    @relation(name: "assignations")
+
+  teamId Int?
+
+  @@map("users")
+}
+
+enum UserTags {
+  newbie
+  jr
+  semiSenior
+  senior
+  SME
+}
+
+enum UserRoles {
+  user
+  admin
+  recruiter
+  organization
+}
+
+// Team Model
+// The team is the grouping of collaborators, classified based on their role in the project, such as frontend, dba, Q&A, backend, etc. A team can have an indefinite number of members and, in turn, have subteams. Therefore, a project could have a single team, and within it, many subteams with a maximum of 2 levels of nesting, i.e., team and subteam. The team also has a status that can be open (seeking new members), closed (no more members can be added to this team) or inactive (the team has been closed or deprecated). All teams belong to a project, but a project can have a maximum of 5 teams.
+model Team {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String
+  status    TeamStatus
+
+  // Relations
+  userId  Int
+  leader  User   @relation(fields: [userId], references: [id], name: "leader")
+  members User[] @relation(name: "members")
+
+  @@map("teams")
+}
+
+// Enum for team status
+enum TeamStatus {
+  open
+  closed
+  inactive
+}
+
+// Project Model
+// The project is the second fundamental unit of the app. A project has a type, for example, UX/UI, Web development, Mobile development, Video game creation, 3D animation, and many more. All projects have a single creator or owner, but they can have many collaborators and many teams. The project has a status that can be (new, in development, completed, or canceled). Each project has a general status report, and each project has multiple tasks associated with it.
+model Project {
+  id                  Int             @id @default(autoincrement())
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  category            ProjectCategory
+  name                String
+  ownerId             Int
+  description         String
+  image               String?
+  githubRepo          String?
+  openToColaborations Boolean         @default(true)
+
+  // Relations
+  owner         User      @relation(fields: [ownerId], references: [id])
+  collaborators User[]    @relation(name: "colaborations")
+  comments      Comment[]
+  tasks         Task[]
+  Report        Report[]
+
+  @@map("projects")
+}
+
+// Enum for project category
+enum ProjectCategory {
+  UX_UI
+  WebDevelopment
+  MobileDevelopment
+  VideoGameCreation
+  Animation3D
+  // Add more categories as needed
+}
+
+//task
+// las tareas son la forma en que los colabores pueden contribuir a un proyecto, estas son creadas y listadas por el creador del proyecto y se gestionan a traves de queries. las unicas formas de alterar el estado de una tarea es hacerlo de manera manual desde el panel de administrador del creador del proyecto o a traves de una peticion o query realizada por algun colaborador del proyecto. Una misma tarea puede estar asociada a varios usuarios (en calidad de colaboradores de un proyecto) y un usuario puede tener multiples tareas asignadas. Todas las tareas tienen una fecha de expiracion asignada por el creador.
+model Task {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  name       String
+  projectId  Int
+  queryId    Int?
+  status     TaskStatus
+  expiration DateTime
+
+  Project  Project   @relation(fields: [projectId], references: [id])
+  asignees User[]    @relation(name: "assignations")
+  Comment  Comment[]
+  Query    Query[]
+
+  // Otras relaciones o campos según sea necesario
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  open
+  needContribution
+  inProgress
+  paused
+  expired
+  pendingApproval
+  completed
+  cancelled
+}
+
+// Comment Model
+// Comments are publicly viewable and serve as a way to express opinions, ideas, or messages about a project, report, query, or task. Each comment can have a thread, which nests other comments within it. The parent comment is marked as "parent," and the comments within the thread are marked as "children."
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+  userId    Int
+  projectId Int
+  taskId    Int?
+  queryId   Int?
+  reportId  Int?
+
+  parentId Int?
+  parent   Comment? @relation("children", fields: [parentId], references: [id])
+
+  // Relations to represent comment threads
+  children Comment[] @relation("children")
+  Project  Project   @relation(fields: [projectId], references: [id])
+  Task     Task?     @relation(fields: [taskId], references: [id])
+  Query    Query?    @relation(fields: [queryId], references: [id])
+  Report   Report?   @relation(fields: [reportId], references: [id])
+
+  // Other relations or fields as needed
+  @@map("comments")
+}
+
+// Query Model
+// Queries are the formal way of collaborating in the app. When a collaborator wants to take on a task, they will send a query to the project leader with this request, and it will only be assigned once the PL approves. A query can be sent among members with already assigned tasks to perform other actions, such as inviting to assign, unassigning from a task, generating a report on its status, linking with another, etc.
+model Query {
+  id               Int         @id @default(autoincrement())
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  scheduledFor     DateTime
+  name             String
+  status           QueryStatus @default(open)
+  type             QueryType
+  taskId           Int
+  createdBy        Int
+  assignedTo       Int
+  description      String?
+  approvalDeadline DateTime?
+
+  // Relations to represent linked queries or actions
+
+  Task    Task      @relation(fields: [taskId], references: [id])
+  Comment Comment[]
+}
+
+// Enum for Query Type
+enum QueryType {
+  assignment
+  unassignment
+  markAsCompleted
+  modifyTask
+  requestColaboration
+  link
+  // Add more types as needed
+}
+
+// Enum for Query Status
+enum QueryStatus {
+  open
+  pendingApproval
+  closed
+  // Otros estados según sea necesario
+}
+
+// Report Model
+// Reports are ways to make progress, problems, or any situation regarding a task or project public. Reports can be made on /project or on /task. They can be of types: contribution report, bug, alteration, rollback, or task/project status report.
+model Report {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  type      ReportType
+  Comment   Comment[]
+  reportId  Int?
+
+  // Relations
+  Project Project? @relation(fields: [reportId], references: [id])
+}
+
+// Enum for Report Type
+enum ReportType {
+  contribution
+  bug
+  alteration
+  rollback
+  taskStatus
+  projectStatus
+  // Add more types as needed
+}
+
+//? tablas de catalogo (readOnly)
+//? tablas de catalogo (readOnly)
+//? tablas de catalogo (readOnly)
+
+//country
+model Country {
+  id   Int    @id @default(autoincrement())
+  name String
+  code String
+
+  // Otras relaciones o campos según sea necesario
+  @@map("countries")
+}
+
+//tech
+model Tech {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  // Otras relaciones o campos según sea necesario
+  @@map("techs")
+}

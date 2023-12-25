@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  # Servicio de base de datos (Ejemplo: PostgreSQL)
+  dev-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: libereco
+      POSTGRES_USER: lbrc_admin
+      POSTGRES_PASSWORD: lbrc_password
+    ports:
+      - "5434:5432"

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   Task as PrismaTask,
   TaskStatus as PrismaTaskStatus,
+  TaskCategory as PrismaTaskCategory,
 } from '@prisma/client';
 
 export class TaskEntity implements PrismaTask {
@@ -18,6 +19,9 @@ export class TaskEntity implements PrismaTask {
   name: string;
 
   @ApiProperty()
+  description: string; // Agregado para coincidir con el modelo de Prisma
+
+  @ApiProperty()
   projectId: number;
 
   @ApiProperty()
@@ -25,6 +29,9 @@ export class TaskEntity implements PrismaTask {
 
   @ApiProperty()
   status: PrismaTaskStatus;
+
+  @ApiProperty()
+  category: PrismaTaskCategory; // Cambiado para coincidir con el modelo de Prisma
 
   @ApiProperty()
   expiration: Date;

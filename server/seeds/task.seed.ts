@@ -1,6 +1,6 @@
-// TODO: Omitir la carpeta seeds en producción.
+/* eslint-disable */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, TaskStatus, TaskCategory } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
@@ -9,7 +9,9 @@ export async function seedTasks(quantity: number, tx?: any) {
   try {
     // Verificar si se está ejecutando dentro de una transacción y usarla si está disponible
     if (process.env.NODE_ENV === 'production' && !tx) {
-      throw new Error('No se puede ejecutar en producción sin una transacción.');
+      throw new Error(
+        'No se puede ejecutar en producción sin una transacción.',
+      );
     }
 
     // Ejecutar la semilla solo si no está dentro de una transacción o si es desarrollo
@@ -22,15 +24,19 @@ export async function seedTasks(quantity: number, tx?: any) {
         await prisma.task.create({
           data: {
             name: faker.lorem.words(2),
+            description: faker.lorem.sentence(), // Agregado para coincidir con el modelo de Prisma
             projectId: project.id,
             queryId: null, // Puedes ajustar según tus necesidades
-            status: faker.helpers.arrayElement(['open', 'inProgress', 'completed']),
+            status: faker.helpers.arrayElement(Object.values(TaskStatus)), // Modificado para coincidir con el modelo de Prisma
+            category: faker.helpers.arrayElement(Object.values(TaskCategory)), // Agregado para coincidir con el modelo de Prisma
             expiration: faker.date.future(), // Puedes ajustar según tus necesidades
           },
         });
       }
 
-      console.log(`Semilla de tareas completada. Se generaron ${quantity} tareas.`);
+      console.log(
+        `Semilla de tareas completada. Se generaron ${quantity} tareas.`,
+      );
     } else {
       console.log('La semilla de tareas no se ejecutó en producción.');
     }

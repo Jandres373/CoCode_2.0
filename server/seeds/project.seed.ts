@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 // TODO: Omitir la carpeta seeds en producción.
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, ProjectCategory } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
@@ -19,13 +19,7 @@ export async function seedProjects(quantity: number, tx?: any) {
         const userId = i + 1;
         await prisma.project.create({
           data: {
-            category: faker.helpers.arrayElement([
-              'UX_UI',
-              'WebDevelopment',
-              'MobileDevelopment',
-              'VideoGameCreation',
-              'Animation3D',
-            ]),
+            category: faker.helpers.arrayElement(Object.values(ProjectCategory)), // Modificado para coincidir con el modelo de Prisma
             name: faker.lorem.words(3),
             ownerId: userId, // Reemplaza con un ID de usuario válido
             description: faker.lorem.paragraph(),

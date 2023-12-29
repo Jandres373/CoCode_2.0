@@ -14,7 +14,8 @@ export class ProjectEntity implements PrismaProject {
   @ApiProperty()
   updatedAt: Date;
 
-  @ApiProperty()
+  // Opciones adicionales para reflejar el cambio en la propiedad 'category'
+  @ApiProperty({ enum: Object.values(PrismaProjectCategory) })
   category: PrismaProjectCategory;
 
   @ApiProperty()
@@ -50,6 +51,4 @@ export class ProjectEntity implements PrismaProject {
 
   @ApiProperty()
   Report: any[]; // Reemplaza 'any[]' con el tipo adecuado para 'Report'
-
-  // Otras propiedades relacionadas que puedan existir en tu modelo
 }

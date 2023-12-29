@@ -28,10 +28,10 @@ model User {
   country        String?
   githubUser     String?
   ranking        Int?
-  points         Int       @default(0)
-  tag            UserTags  @default(newbie)
-  openToWork     Boolean   @default(true)
-  rol            UserRoles @default(user)
+  points         Int       @default(0) 
+  openToWork     Boolean   @default(true) 
+  tag            UserTags  @default(newbie) 
+  rol            UserRoles @default(user) 
 
   // Relations
   projectsCreated      Project[]
@@ -57,7 +57,7 @@ enum UserRoles {
   user
   admin
   recruiter
-  organization
+  organization 
 }
 
 // Team Model
@@ -110,25 +110,26 @@ model Project {
 
 // Enum for project category
 enum ProjectCategory {
-  UX_UI
-  WebDevelopment
-  MobileDevelopment
-  VideoGameCreation
-  Animation3D
-  // Add more categories as needed
+  uxUi
+  webDevelopment
+  mobileDevelopment
+  videoGameCreation
+  animation3D
 }
 
 //task
 // las tareas son la forma en que los colabores pueden contribuir a un proyecto, estas son creadas y listadas por el creador del proyecto y se gestionan a traves de queries. las unicas formas de alterar el estado de una tarea es hacerlo de manera manual desde el panel de administrador del creador del proyecto o a traves de una peticion o query realizada por algun colaborador del proyecto. Una misma tarea puede estar asociada a varios usuarios (en calidad de colaboradores de un proyecto) y un usuario puede tener multiples tareas asignadas. Todas las tareas tienen una fecha de expiracion asignada por el creador.
 model Task {
-  id         Int        @id @default(autoincrement())
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  name       String
-  projectId  Int
-  queryId    Int?
-  status     TaskStatus
-  expiration DateTime
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  description String
+  projectId   Int
+  queryId     Int?
+  status      TaskStatus
+  category    TaskCategory
+  expiration  DateTime
 
   Project  Project   @relation(fields: [projectId], references: [id])
   asignees User[]    @relation(name: "assignations")
@@ -148,6 +149,36 @@ enum TaskStatus {
   pendingApproval
   completed
   cancelled
+}
+
+enum TaskCategory {
+  ux
+  ui
+  backend
+  frontend
+  database
+  testing
+  deployment
+  security
+  maintenance
+  documentation
+  analytics
+  performance
+  accessibility
+  research
+  collaboration
+  optimization
+  mobile
+  internationalization
+  training
+  userFeedback
+  crisisManagement
+  scalability
+  legalCompliance
+  continuousIntegration
+  dataPrivacy
+  userOnboarding
+  generalTask
 }
 
 // Comment Model
@@ -214,6 +245,7 @@ enum QueryType {
 enum QueryStatus {
   open
   pendingApproval
+  aprroved
   closed
   // Otros estados según sea necesario
 }

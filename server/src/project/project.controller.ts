@@ -11,7 +11,8 @@ import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
-@Controller('project')
+/* @UseGuards(new JwtGuard()) */
+@Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
@@ -25,6 +26,10 @@ export class ProjectController {
     return this.projectService.findAll();
   }
 
+  @Get(':id/tasks')
+  projectTasks(@Param('id') id: string) {
+    return this.projectService.getProjectTasks(+id);
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.projectService.findOne(+id);

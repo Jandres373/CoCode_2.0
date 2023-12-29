@@ -1,32 +1,43 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../styles/globals.css";
-import { cn } from "@/lib/utils";
-
-const inter = Inter({ subsets: ["latin"] });
+import type { Metadata } from 'next'
+import { REGULAR } from '@/styles/fonts'
+import '@/styles/globals.css'
+import { ThemeProvider } from '@/providers/theme.provider'
+import UserSession from '@/providers/session.provider'
+import { getServerSession } from 'next-auth'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
-  title: "Cocode 2.0",
-  description:
-    "Find the most interesting projects and colabarate building them.",
-};
+  title: 'CoCode 2.0',
+  description: 'Colaborate and make real your ideas with CoCode.',
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
+  const session = await getServerSession()
+  //constants
+
+  //jsx
   return (
     <html lang="en">
-      <body
-        className={cn(inter.className, "grid grid-rows-12 w-full h-[100dvh] overflow-x-hidden")}
-      >
-        <section className="row-span-1 bg-red-50">navbar</section>
-        <section className="row-span-11 bg-blue-50">
-          <main className="h-full bg-green-50">{children}</main>
-          <div className="h-28">footer</div>
-        </section>
+      <body className={REGULAR.className}>
+        <UserSession session={session}>
+          <ThemeProvider
+            themes={['pink', 'red', 'blue', 'light', 'dark']}
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main className="w-[99svw] h-[99svh]">
+              <section className="">{children}</section>
+              <Toaster />
+            </main>
+          </ThemeProvider>
+        </UserSession>
       </body>
     </html>
-  );
+  )
 }

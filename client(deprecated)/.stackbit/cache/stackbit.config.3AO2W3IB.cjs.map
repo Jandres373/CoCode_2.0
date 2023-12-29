@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../stackbit.config.ts"],
+  "sourcesContent": ["import { defineStackbitConfig } from '@stackbit/types'\r\n\r\nexport default defineStackbitConfig({\r\n  stackbitVersion: '~0.6.0',\r\n  ssgName: 'nextjs',\r\n  nodeVersion: '18',\r\n  contentSources: [ /* ... */ ],\r\n  modelExtensions: [{ name: 'page', type: 'page', urlPath: '/{slug}', fields: [\r\n    {\r\n      type: 'enum',\r\n      name: 'width',\r\n      label: 'Width',\r\n      group: 'design',\r\n      controlType: 'button-group',\r\n      options: [\r\n        { label: 'Narrow', value: 'narrow' },\r\n        { label: 'Wide', value: 'wide' },\r\n        { label: 'Full', value: 'full' },\r\n      ],\r\n    },\r\n  ], }],\r\n  // other properties ...\r\n  // ...\r\n})"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,mBAAqC;AAErC,IAAO,8BAAQ,mCAAqB;AAAA,EAClC,iBAAiB;AAAA,EACjB,SAAS;AAAA,EACT,aAAa;AAAA,EACb,gBAAgB;AAAA;AAAA,EAAY;AAAA,EAC5B,iBAAiB,CAAC,EAAE,MAAM,QAAQ,MAAM,QAAQ,SAAS,WAAW,QAAQ;AAAA,IAC1E;AAAA,MACE,MAAM;AAAA,MACN,MAAM;AAAA,MACN,OAAO;AAAA,MACP,OAAO;AAAA,MACP,aAAa;AAAA,MACb,SAAS;AAAA,QACP,EAAE,OAAO,UAAU,OAAO,SAAS;AAAA,QACnC,EAAE,OAAO,QAAQ,OAAO,OAAO;AAAA,QAC/B,EAAE,OAAO,QAAQ,OAAO,OAAO;AAAA,MACjC;AAAA,IACF;AAAA,EACF,EAAG,CAAC;AAAA;AAAA;AAGN,CAAC;",
+  "names": []
+}

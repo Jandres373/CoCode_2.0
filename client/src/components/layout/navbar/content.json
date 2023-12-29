@@ -1,0 +1,50 @@
+{
+  "brandName": {
+    "first": "Co",
+    "second": "Code"
+  },
+  "links": {
+    "offlineLinks": [
+      {
+        "label": "Explore",
+        "url": "/explore"
+      },
+      {
+        "label": "About",
+        "url": "/about"
+      },
+      {
+        "label": "Contact",
+        "url": "/contact"
+      },
+      {
+        "label": "Blog",
+        "url": "/blog"
+      }
+    ],
+    "onlineLinks": [
+      {
+        "label": "Explore",
+        "url": "/explore"
+      },
+      {
+        "label": "Workspace",
+        "url": "/workspace"
+      },
+      {
+        "label": "Profile",
+        "url": "/user/me"
+      }
+    ]
+  },
+  "button": {
+    "content": {
+      "login": "Login",
+      "logOut": "Log Out"
+    },
+    "links": {
+      "login": "/login",
+      "logOut": "/"
+    }
+  }
+}

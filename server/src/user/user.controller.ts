@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entity/user.entity';
@@ -16,5 +16,11 @@ export class UserController {
   @ApiOkResponse({ type: UserEntity })
   getMe(@GetUser() user: User): User {
     return user;
+  }
+
+  @Get(':id')
+  @ApiOkResponse({ type: UserEntity })
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id);
   }
 }
